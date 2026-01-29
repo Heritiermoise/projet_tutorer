@@ -1,8 +1,9 @@
 // @ts-check
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     mot_de_passe: ''
@@ -85,7 +86,7 @@ const Login = () => {
         }
         
         console.log('Connexion réussie');
-        window.location.href = '/dashboard';
+        navigate('/dashboard', { replace: true });
       } else {
         setErrors({ submit: data.message || 'Erreur de connexion' });
       }

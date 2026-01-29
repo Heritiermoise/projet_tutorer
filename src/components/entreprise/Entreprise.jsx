@@ -1,7 +1,19 @@
 // @ts-check
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createEntreprise } from '../../lib/entrepriseStore.js';
+import { getStoredUser, getUserId } from '../../lib/auth.js';
 
 const Entreprise = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = getStoredUser();
+    if (!user) {
+      navigate('/login', { replace: true });
+    }
+  }, [navigate]);
+
   const [formData, setFormData] = useState({
     nom: '',
     nom_commercial: '',
@@ -52,18 +64,35 @@ const Entreprise = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+
+    const user = getStoredUser();
+    const userId = getUserId(user);
+    if (!userId) {
+      setErrors({ submit: 'Veuillez vous connecter pour créer une entreprise.' });
+      navigate('/login', { replace: true });
+      return;
+    }
+
     setLoading(true);
     setSuccess('');
     try {
-      // Remplacer par l'appel API réel
-      setTimeout(() => {
-        setSuccess('Entreprise créée avec succès !');
-        setLoading(false);
-        setFormData({
-          nom: '', nom_commercial: '', email: '', telephone: '', password: '',
-          photo_profil: null, photo_couverture: null, description: '', adresse: ''
-        });
-      }, 1200);
+      // MVP pro: stockage local multi-entreprises. À remplacer ensuite par un vrai backend.
+      await new Promise((r) => setTimeout(r, 600));
+      const entreprise = createEntreprise(
+        {
+          nom: formData.nom,
+          nom_commercial: formData.nom_commercial,
+          email: formData.email,
+          telephone: formData.telephone,
+          description: formData.description,
+          adresse: formData.adresse,
+        },
+        String(userId)
+      );
+
+      setSuccess('Entreprise créée avec succès ! Redirection...');
+      setLoading(false);
+      navigate(`/entreprise/${entreprise.id}/admin`, { replace: true });
     } catch {
       setErrors({ submit: "Erreur lors de la création." });
       setLoading(false);
