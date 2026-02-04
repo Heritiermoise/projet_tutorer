@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getStoredUser, getUserId } from '../lib/auth.js';
-import { getMyDefaultEntrepriseAdminRoute } from '../lib/entrepriseStore.js';
+import { getMyDefaultEntrepriseAdminRoute, listEntreprisesForUser } from '../lib/entrepriseStore.js';
 
 export default function DashboardLanding() {
   const navigate = useNavigate();
@@ -19,6 +19,15 @@ export default function DashboardLanding() {
     if (adminRoute) {
       navigate(adminRoute, { replace: true });
       return;
+    }
+    // Si l'utilisateur est membre (non admin) d'une entreprise, rediriger vers l'espace employé
+    const entries = listEntreprisesForUser(String(userId));
+    if (entries && entries.length > 0) {
+      const first = entries[0];
+      if (first && first.entreprise) {
+        navigate(`/entreprise/${first.entreprise.id}/employee`, { replace: true });
+        return;
+      }
     }
 
     navigate('/entreprise/creer', { replace: true });

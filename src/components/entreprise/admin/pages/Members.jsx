@@ -1,11 +1,17 @@
 // @ts-check
 import React, { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
 import { getStoredUser, getUserId } from '../../../../lib/auth.js';
 import { listEntrepriseMembers } from '../../../../lib/entrepriseStore.js';
 
 export default function Members() {
-  const { entrepriseId } = useParams();
+  const entrepriseId = (() => {
+    try {
+      const match = window.location.pathname.match(/\/entreprise\/([^/]+)/);
+      return match ? decodeURIComponent(match[1]) : undefined;
+    } catch (e) {
+      return undefined;
+    }
+  })();
   const user = getStoredUser();
   const userId = getUserId(user);
 

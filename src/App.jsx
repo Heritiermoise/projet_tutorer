@@ -11,6 +11,7 @@ import Footer from './components/common/Footer.jsx';
 
 import RequireAuth from './routes/RequireAuth.jsx';
 import RequireEntrepriseAdmin from './routes/RequireEntrepriseAdmin.jsx';
+import RequireEntrepriseMember from './routes/RequireEntrepriseMember.jsx';
 import DashboardLanding from './routes/DashboardLanding.jsx';
 import Logout from './routes/Logout.jsx';
 
@@ -18,6 +19,9 @@ import AdminDashboardLayout from './components/entreprise/admin/AdminDashboardLa
 import AdminOverview from './components/entreprise/admin/pages/Overview.jsx';
 import AdminMembers from './components/entreprise/admin/pages/Members.jsx';
 import AdminSettings from './components/entreprise/admin/pages/Settings.jsx';
+import EmployeeDashboardLayout from './components/entreprise/employee/EmployeeDashboardLayout.jsx';
+import EmployeeOverview from './components/entreprise/employee/pages/Overview.jsx';
+import EmployeeTasks from './components/entreprise/employee/pages/Tasks.jsx';
 
 /**
  * @param {{title: string, description: string, icon: React.ReactNode, color: string}} props
@@ -286,6 +290,12 @@ function App() {
               <Route index element={<AdminOverview />} />
               <Route path="members" element={<AdminMembers />} />
               <Route path="settings" element={<AdminSettings />} />
+            </Route>
+          </Route>
+          <Route path="/entreprise/:entrepriseId/employee" element={<RequireEntrepriseMember />}>
+            <Route element={<EmployeeDashboardLayout />}>
+              <Route index element={<EmployeeOverview />} />
+              <Route path="tasks" element={<EmployeeTasks />} />
             </Route>
           </Route>
         </Route>
