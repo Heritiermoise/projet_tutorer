@@ -1,8 +1,6 @@
 // src/hooks/useAuth.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMyDefaultEntrepriseAdminRoute, listEntreprisesForUser } from "../lib/entrepriseStore.js";
-import { getUserId } from "../lib/auth.js";
 
 export const useAuth = () => {
   const navigate = useNavigate();
@@ -47,33 +45,7 @@ export const useAuth = () => {
         setUser(data.user);
         setToken(data.token);
 
-        // Redirection selon rôle : admin d'une entreprise existante => admin dashboard
-        try {
-          const adminRoute = getMyDefaultEntrepriseAdminRoute();
-          if (adminRoute) {
-            navigate(adminRoute, { replace: true });
-            return;
-          }
-
-          // Sinon, si l'utilisateur a au moins une entreprise (non-admin possible), rediriger vers son espace employé
-          const uid = getUserId(data.user);
-          if (uid) {
-            const entries = listEntreprisesForUser(String(uid));
-            if (entries && entries.length > 0) {
-              const first = entries[0];
-              if (first && first.entreprise) {
-                navigate(`/entreprise/${first.entreprise.id}/employee`, { replace: true });
-                return;
-              }
-            }
-          }
-
-          // Par défaut, page landing (qui proposera création d'entreprise)
-          navigate("/dashboard", { replace: true });
-        } catch (e) {
-          console.error('Redirect error:', e);
-          navigate("/dashboard", { replace: true });
-        }
+        navigate("/dashboard", { replace: true });
       } else {
         setErrors({ submit: data.message || "Email ou mot de passe incorrect" });
       }
